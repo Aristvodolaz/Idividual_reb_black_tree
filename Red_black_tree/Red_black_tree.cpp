@@ -141,3 +141,45 @@ void RBTree::RB_INSERT_FIXUP(Node* z) {
 	y = NULL;
 }
 
+void RBTree::RB_INSERT(Node* z) {
+	Node* y = nil;
+	Node* x = root;
+
+	while (x != nil) {
+		y = x;
+		if (strcmp(z->key, x->key) < 0)
+			x = x->left;
+		else
+			x = x->right;
+	}
+
+	z->parent = y;
+	z->color = 'R';
+	z->left = z->right = nil;
+
+	if (y == nil)
+		root = z;
+	else if (strcmp(z->key, y->key) < 0)
+		y->left = z;
+	else
+		y->right = z;
+
+	RB_INSERT_FIXUP(z);
+
+
+}
+
+void RBTree::INORDER() {
+	INORDER(root);
+}
+
+void RBTree::INORDER(Node* z) {
+
+	if (z != nil) {
+		INORDER(z->left);
+		cout << z->key << " ";
+		INORDER(z->right);
+	}
+
+
+}
