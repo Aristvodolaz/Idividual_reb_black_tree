@@ -1,20 +1,143 @@
-﻿// Red_black_tree.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include "RBTree.h"
 
-#include <iostream>
-
-int main()
-{
-    std::cout << "Hello World!\n";
+Node::Node(const char* n) {
+	key = n;
+	left = 0;
+	right = 0;
+	parent = 0;
+	color = NULL;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+Node::Node() {
+	key = NULL;
+	left = 0;
+	right = 0;
+	parent = 0;
+	color = NULL;
+}
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+RBTree::RBTree() {
+
+	nil = new Node();
+	root = nil;
+}
+
+void RBTree::leftRotate(Node* x) {
+	Node* y = x->right;
+	x->right = y->left;
+	if (y->left != nil) {
+		y->left->parent = x;
+	}
+	y->parent = x->parent;
+
+	if (x->parent == nil) {
+		root = y;
+	}
+	else if (x == x->parent->left) {
+		x->parent->left = y;
+	}
+	else {
+		x->parent->right = y;
+	}
+	y->left = x;
+	x->parent = y;
+
+}
+
+void RBTree::rightRotate(Node* x) {
+	Node* y = x->left;
+	x->left = y->right;
+	if (y->right != nil) {
+		y->right->parent = x;
+	}
+	y->parent = x->parent;
+
+	if (x->parent == nil) {
+		root = y;
+	}
+	else if (x == x->parent->right) {
+		x->parent->right = y;
+	}
+	else {
+		x->parent->left = y;
+	}
+	y->right = x;
+	x->parent = y;
+
+}
+
+void RBTree::treeInsert(Node* z) {
+	cout << "TI: Here" << endl;
+	Node* y = NULL;
+	Node* x = root;
+
+	while (x != NULL) {
+		y = x;
+		if (strcmp(z->key, x->key) < 0) {
+			x = x->left;
+		}
+		else {
+			x = x->right;
+		}
+	}
+	z->parent = y;
+	if (y == NULL) {
+		root = z;
+	}
+	else if (strcmp(z->key, y->key) < 0) {
+		y->left = z;
+	}
+	else {
+		y->right = z;
+	}
+}
+
+void RBTree::RB_INSERT_FIXUP(Node* z) {
+	Node* y;
+
+	while (z->parent->color == 'R') {
+		if (z->parent == z->parent->parent->left) {
+			y = z->parent->parent->right;
+
+			if (y->color == 'R') {
+				z->parent->color = 'B';
+				y->color = 'B';
+				z->parent->parent->color = 'R';
+				z = z->parent->parent;
+			}
+			else {
+				if (z == z->parent->right) {
+					z = z->parent;
+					leftRotate(z);
+				}
+				z->parent->color = 'B';
+				z->parent->parent->color = 'R';
+				rightRotate(z->parent->parent);
+			}
+
+		}
+		else {
+			y = z->parent->parent->left;
+
+			if (y->color == 'R') {
+				z->parent->color = 'B';
+				y->color = 'B';
+				z->parent->parent->color = 'R';
+				z = z->parent->parent;
+			}
+			else {
+				if (z == z->parent->left) {
+					z = z->parent;
+					rightRotate(z);
+				}
+				z->parent->color = 'B';
+				z->parent->parent->color = 'R';
+				leftRotate(z->parent->parent);
+			}
+
+		}
+	}
+	root->color = 'B';
+	y = NULL;
+}
+
